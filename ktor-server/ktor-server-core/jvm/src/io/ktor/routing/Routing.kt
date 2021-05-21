@@ -23,7 +23,8 @@ public class Routing(
 ) : Route(
     parent = null,
     selector = RootRouteSelector(application.environment.rootPath),
-    application.environment.developmentMode
+    application.environment.developmentMode,
+    application.environment
 ) {
     private val tracers = mutableListOf<(RoutingResolveTrace) -> Unit>()
 
