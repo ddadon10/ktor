@@ -299,7 +299,7 @@ open class BytePacketBuildTest {
         val result = ByteArray(length)
 
         for (i in 0 until length) {
-            val v = this[i].toInt() and 0xff
+            val v = this[i].code and 0xff
             if (v > 0x7f) fail()
             result[i] = v.toByte()
         }
