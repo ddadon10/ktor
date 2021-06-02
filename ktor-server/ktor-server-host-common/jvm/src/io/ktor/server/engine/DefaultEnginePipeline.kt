@@ -23,6 +23,7 @@ import java.util.concurrent.*
 /**
  * Default engine pipeline for all engines. Use it only if you are writing your own application engine implementation.
  */
+@OptIn(InternalAPI::class)
 @EngineAPI
 public fun defaultEnginePipeline(environment: ApplicationEnvironment): EnginePipeline {
     val pipeline = EnginePipeline(environment.developmentMode)
@@ -61,6 +62,7 @@ public suspend fun handleFailure(call: ApplicationCall, error: Throwable) {
     tryRespondError(call, defaultExceptionStatusCode(error) ?: HttpStatusCode.InternalServerError)
 }
 
+@OptIn(InternalAPI::class)
 @EngineAPI
 public suspend fun logError(call: ApplicationCall, error: Throwable) {
     with(CallLogging.Internals) {

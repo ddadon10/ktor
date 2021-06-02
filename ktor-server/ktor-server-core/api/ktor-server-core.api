@@ -636,9 +636,9 @@ public final class io/ktor/features/KotlinTimeJvmKt {
 	public static final fun getMaxAge (Lio/ktor/sessions/CookieConfiguration;)Lkotlin/time/Duration;
 	public static final fun getMaxAgeDuration (Lio/ktor/features/CORS$Configuration;)J
 	public static final fun getMaxAgeDuration (Lio/ktor/features/HSTS$Configuration;)J
-	public static final fun setMaxAge-g7yk5mg (Lio/ktor/sessions/CookieConfiguration;Lkotlin/time/Duration;)V
-	public static final fun setMaxAgeDuration-U-RQOxY (Lio/ktor/features/CORS$Configuration;J)V
-	public static final fun setMaxAgeDuration-mhQl6bo (Lio/ktor/features/HSTS$Configuration;J)V
+	public static final fun setMaxAge-6Au4x4Y (Lio/ktor/sessions/CookieConfiguration;Lkotlin/time/Duration;)V
+	public static final fun setMaxAgeDuration-HG0u8IE (Lio/ktor/features/CORS$Configuration;J)V
+	public static final fun setMaxAgeDuration-HG0u8IE (Lio/ktor/features/HSTS$Configuration;J)V
 }
 
 public final class io/ktor/features/MissingRequestParameterException : io/ktor/features/BadRequestException, kotlinx/coroutines/CopyableThrowable {
@@ -1906,7 +1906,6 @@ public final class io/ktor/util/DispatcherWithShutdown : kotlinx/coroutines/Coro
 public final class io/ktor/util/ParametersKt {
 	public static final fun getOrFail (Lio/ktor/http/Parameters;Ljava/lang/String;)Ljava/lang/String;
 	public static final fun getOrFailImpl (Lio/ktor/http/Parameters;Ljava/lang/String;Lio/ktor/util/reflect/TypeInfo;)Ljava/lang/Object;
-	public static final fun getOrFailImpl (Lio/ktor/http/Parameters;Ljava/lang/String;Lkotlin/reflect/KClass;Ljava/lang/reflect/Type;)Ljava/lang/Object;
 }
 
 public final class io/ktor/util/PathsKt {

@@ -18,7 +18,7 @@ import kotlin.reflect.*
 /**
  * Sends a [message] as a response
  */
-@OptIn(ExperimentalStdlibApi::class)
+@OptIn(ExperimentalStdlibApi::class, InternalAPI::class)
 @JvmName("respondWithType")
 public suspend inline fun <reified T : Any> ApplicationCall.respond(message: T) {
     if (message !is OutgoingContent && message !is String && message !is ByteArray) {

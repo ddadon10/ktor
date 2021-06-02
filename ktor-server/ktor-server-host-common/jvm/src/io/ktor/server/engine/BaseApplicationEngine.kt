@@ -13,6 +13,7 @@ import io.ktor.util.pipeline.*
 import io.ktor.routing.*
 import io.ktor.util.network.*
 import io.ktor.util.pipeline.*
+import io.ktor.util.*
 import kotlinx.coroutines.*
 import java.util.*
 
@@ -70,6 +71,7 @@ public abstract class BaseApplicationEngine(
         }
     }
 
+    @OptIn(InternalAPI::class)
     private fun Application.installDefaultInterceptors() {
         intercept(ApplicationCallPipeline.Setup) {
             call.response.pipeline.intercept(ApplicationSendPipeline.Before) {

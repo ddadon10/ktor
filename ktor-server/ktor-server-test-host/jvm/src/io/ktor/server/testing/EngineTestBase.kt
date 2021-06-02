@@ -6,7 +6,6 @@ package io.ktor.server.testing
 
 import io.ktor.application.*
 import io.ktor.client.*
-import io.ktor.client.call.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.engine.jetty.*
 import io.ktor.client.request.*
@@ -34,8 +33,8 @@ import kotlin.coroutines.*
 import kotlin.test.*
 
 @Suppress("KDocMissingDocumentation")
-public abstract class EngineTestBase<TEngine : ApplicationEngine, TConfiguration : ApplicationEngine.Configuration>(
-    public val applicationEngineFactory: ApplicationEngineFactory<TEngine, TConfiguration>
+abstract class EngineTestBase<TEngine : ApplicationEngine, TConfiguration : ApplicationEngine.Configuration>(
+    val applicationEngineFactory: ApplicationEngineFactory<TEngine, TConfiguration>
 ) : CoroutineScope {
     private val testJob = Job()
 
@@ -53,13 +52,13 @@ public abstract class EngineTestBase<TEngine : ApplicationEngine, TConfiguration
     protected var server: TEngine? = null
     protected var callGroupSize: Int = -1
         private set
-    protected val exceptions: ArrayList<Throwable> = ArrayList<Throwable>()
+    protected val exceptions: ArrayList<Throwable> = ArrayList()
     protected var enableHttp2: Boolean = System.getProperty("enable.http2") == "true"
     protected var enableSsl: Boolean = System.getProperty("enable.ssl") != "false"
 
     private val allConnections = CopyOnWriteArrayList<HttpURLConnection>()
 
-    public val testLog: Logger = LoggerFactory.getLogger("EngineTestBase")
+    val testLog: Logger = LoggerFactory.getLogger("EngineTestBase")
 
     @Target(AnnotationTarget.FUNCTION)
     @Retention
@@ -73,21 +72,21 @@ public abstract class EngineTestBase<TEngine : ApplicationEngine, TConfiguration
         get() = testJob + testDispatcher
 
     @get:Rule
-    public val test: TestName = TestName()
+    val test: TestName = TestName()
 
-    public open val timeout: Long = if (isUnderDebugger) {
+    open val timeout: Long = if (isUnderDebugger) {
         1000000
     } else {
         (System.getProperty("host.test.timeout.seconds")?.toLong() ?: TimeUnit.MINUTES.toSeconds(4))
     }
 
     @get:Rule
-    public val timeoutRule: CoroutinesTimeout by lazy { CoroutinesTimeout.seconds(timeout.toInt()) }
+    val timeoutRule: CoroutinesTimeout by lazy { CoroutinesTimeout.seconds(timeout.toInt()) }
 
     protected val socketReadTimeout: Int by lazy { TimeUnit.SECONDS.toMillis(timeout).toInt() }
 
     @BeforeTest
-    public fun setUpBase() {
+    fun setUpBase() {
         val method = this.javaClass.getMethod(test.methodName) ?: fail("Method ${test.methodName} not found")
 
         if (method.isAnnotationPresent(Http2Only::class.java)) {
@@ -102,7 +101,7 @@ public abstract class EngineTestBase<TEngine : ApplicationEngine, TConfiguration
     }
 
     @AfterTest
-    public fun tearDownBase() {
+    fun tearDownBase() {
         try {
             allConnections.forEach { it.disconnect() }
             testLog.trace("Disposing server on port $port (SSL $sslPort)")
@@ -206,6 +205,7 @@ public abstract class EngineTestBase<TEngine : ApplicationEngine, TConfiguration
         throw MultipleFailureException(lastFailures)
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     protected fun startServer(server: TEngine): List<Throwable> {
         this.server = server
 
@@ -328,15 +328,15 @@ public abstract class EngineTestBase<TEngine : ApplicationEngine, TConfiguration
         }
     }
 
-    public companion object {
-        public val keyStoreFile: File = File("build/temp.jks")
-        public lateinit var keyStore: KeyStore
-        public lateinit var sslContext: SSLContext
-        public lateinit var trustManager: X509TrustManager
+    companion object {
+        val keyStoreFile: File = File("build/temp.jks")
+        lateinit var keyStore: KeyStore
+        lateinit var sslContext: SSLContext
+        lateinit var trustManager: X509TrustManager
 
         @BeforeClass
         @JvmStatic
-        public fun setupAll() {
+        fun setupAll() {
             keyStore = generateCertificate(keyStoreFile, algorithm = "SHA256withECDSA", keySizeInBits = 256)
             val tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm())
             tmf.init(keyStore)
@@ -349,6 +349,7 @@ public abstract class EngineTestBase<TEngine : ApplicationEngine, TConfiguration
             do {
                 delay(50)
                 try {
+                    @Suppress("BlockingMethodInNonBlockingContext")
                     Socket("localhost", port).close()
                     break
                 } catch (expected: IOException) {

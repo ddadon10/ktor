@@ -2,6 +2,8 @@
 * Copyright 2014-2021 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
 */
 
+@file:Suppress("BlockingMethodInNonBlockingContext")
+
 package io.ktor.server.testing.suites
 
 import io.ktor.application.*
@@ -16,7 +18,6 @@ import io.ktor.routing.*
 import io.ktor.server.engine.*
 import io.ktor.server.testing.*
 import io.ktor.utils.io.*
-import io.ktor.utils.io.jvm.javaio.*
 import java.io.*
 import java.util.zip.*
 import kotlin.test.*
@@ -38,7 +39,7 @@ abstract class CompressionTestSuite<TEngine : ApplicationEngine, TConfiguration 
 
         withUrl("/", { header(HttpHeaders.AcceptEncoding, "gzip") }) {
             assertEquals(200, status.value)
-            assertEquals(file.readText(), GZIPInputStream(content.toInputStream()).reader().use { it.readText() })
+            assertEquals(file.readText(), GZIPInputStream(body<InputStream>()).reader().use { it.readText() })
             assertEquals("gzip", headers[HttpHeaders.ContentEncoding])
         }
     }
@@ -63,7 +64,7 @@ abstract class CompressionTestSuite<TEngine : ApplicationEngine, TConfiguration 
 
         withUrl("/", { header(HttpHeaders.AcceptEncoding, "gzip") }) {
             assertEquals(200, status.value)
-            assertEquals("Hello!", GZIPInputStream(content.toInputStream()).reader().use { it.readText() })
+            assertEquals("Hello!", GZIPInputStream(body<InputStream>()).reader().use { it.readText() })
             assertEquals("gzip", headers[HttpHeaders.ContentEncoding])
         }
     }

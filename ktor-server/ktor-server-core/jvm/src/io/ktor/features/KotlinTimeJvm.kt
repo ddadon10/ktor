@@ -13,18 +13,18 @@ import kotlin.time.*
  */
 @ExperimentalTime
 public var CORS.Configuration.maxAgeDuration: Duration
-    get() = maxAgeInSeconds.seconds
+    get() = Duration.seconds(maxAgeInSeconds)
     set(newMaxAge) {
         require(!newMaxAge.isNegative()) { "Only non-negative durations can be specified" }
-        maxAgeInSeconds = newMaxAge.inSeconds.roundToLong()
+        maxAgeInSeconds = newMaxAge.toDouble(DurationUnit.SECONDS).roundToLong()
     }
 
 @ExperimentalTime
 public var HSTS.Configuration.maxAgeDuration: Duration
-    get() = maxAgeInSeconds.seconds
+    get() = Duration.seconds(maxAgeInSeconds)
     set(newMaxAge) {
         require(!newMaxAge.isNegative()) { "Only non-negative durations can be specified" }
-        maxAgeInSeconds = newMaxAge.inSeconds.roundToLong()
+        maxAgeInSeconds = newMaxAge.toDouble(DurationUnit.SECONDS).roundToLong()
     }
 
 /**
@@ -34,8 +34,8 @@ public var HSTS.Configuration.maxAgeDuration: Duration
  */
 @ExperimentalTime
 public var CookieConfiguration.maxAge: Duration?
-    get() = maxAgeInSeconds.seconds
+    get() = Duration.seconds(maxAgeInSeconds)
     set(newMaxAge) {
         require(newMaxAge == null || !newMaxAge.isNegative()) { "Only non-negative durations can be specified" }
-        maxAgeInSeconds = newMaxAge?.inSeconds?.roundToLong() ?: 0L
+        maxAgeInSeconds = newMaxAge?.toDouble(DurationUnit.SECONDS)?.roundToLong() ?: 0L
     }

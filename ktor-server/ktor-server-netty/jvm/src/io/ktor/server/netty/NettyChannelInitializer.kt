@@ -95,6 +95,7 @@ public class NettyChannelInitializer(
         when (protocol) {
             ApplicationProtocolNames.HTTP_2 -> {
                 val handler = NettyHttp2Handler(enginePipeline, environment.application, callEventGroup, userContext)
+                @Suppress("DEPRECATION")
                 pipeline.addLast(Http2MultiplexCodecBuilder.forServer(handler).build())
                 pipeline.channel().closeFuture().addListener {
                     handler.cancel()
@@ -158,7 +159,7 @@ public class NettyChannelInitializer(
             }
 
             try {
-                if (OpenSsl.isAlpnSupported()) {
+                if (SslProvider.isAlpnSupported(SslProvider.OPENSSL)) {
                     return SslProvider.OPENSSL
                 }
             } catch (ignore: Throwable) {

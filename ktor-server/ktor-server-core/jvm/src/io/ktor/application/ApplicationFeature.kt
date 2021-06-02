@@ -95,7 +95,7 @@ public fun <P : Pipeline<*, ApplicationCall>, B : Any, F : Any> P.install(
 public fun <A : Pipeline<*, ApplicationCall>> A.uninstallAllFeatures() {
     val registry = attributes.computeIfAbsent(featureRegistryKey) { Attributes(true) }
     registry.allKeys.forEach {
-        @Suppress("UNCHECKED_CAST")
+        @Suppress("UNCHECKED_CAST", "DEPRECATION")
         uninstallFeature(it as AttributeKey<Any>)
     }
 }
@@ -103,6 +103,7 @@ public fun <A : Pipeline<*, ApplicationCall>> A.uninstallAllFeatures() {
 /**
  * Uninstalls [feature] from the pipeline
  */
+@Suppress("DEPRECATION")
 @Deprecated(
     "This method is misleading and will be removed. " +
         "If you have use case that requires this functionaity, please add it in KTOR-2696"
@@ -142,7 +143,7 @@ public class MissingApplicationFeatureException(
 ) : IllegalStateException(), CopyableThrowable<MissingApplicationFeatureException> {
     override val message: String get() = "Application feature ${key.name} is not installed"
 
-    override fun createCopy(): MissingApplicationFeatureException? = MissingApplicationFeatureException(key).also {
+    override fun createCopy(): MissingApplicationFeatureException = MissingApplicationFeatureException(key).also {
         it.initCause(this)
     }
 }

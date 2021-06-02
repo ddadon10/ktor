@@ -17,7 +17,7 @@ import kotlin.coroutines.*
 
 @Suppress("KDocMissingDocumentation")
 @InternalAPI
-public abstract class NettyApplicationResponse(
+public abstract class NettyApplicationResponse @OptIn(EngineAPI::class) constructor(
     call: NettyApplicationCall,
     protected val context: ChannelHandlerContext,
     protected val engineContext: CoroutineContext,

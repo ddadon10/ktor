@@ -11,7 +11,9 @@ import io.ktor.http.cio.*
 import io.ktor.http.content.*
 import io.ktor.request.*
 import io.ktor.response.*
+import io.ktor.util.*
 import io.ktor.util.cio.*
+import io.ktor.util.cio.toByteArray
 import io.ktor.util.pipeline.*
 import io.ktor.utils.io.*
 import io.ktor.utils.io.charsets.*
@@ -106,6 +108,7 @@ private inline fun <R> withContentType(call: ApplicationCall, block: () -> R): R
     )
 }
 
+@OptIn(InternalAPI::class)
 private fun PipelineContext<*, ApplicationCall>.multiPartData(rc: ByteReadChannel): MultiPartData {
     val contentType = call.request.header(HttpHeaders.ContentType)
         ?: throw IllegalStateException("Content-Type header is required for multipart processing")

@@ -2,6 +2,8 @@
 * Copyright 2014-2021 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
 */
 
+@file:Suppress("BlockingMethodInNonBlockingContext")
+
 package io.ktor.server.testing.suites
 
 import io.ktor.application.*
@@ -141,7 +143,7 @@ abstract class SustainabilityTestSuite<TEngine : ApplicationEngine, TConfigurati
     @NoHttp2
     @Ignore
     open fun testChunkedWrongLength() {
-        val data = ByteArray(16 * 1024, { it.toByte() })
+        val data = ByteArray(16 * 1024) { it.toByte() }
         val doubleSize = (data.size * 2).toString()
         val halfSize = (data.size / 2).toString()
 
@@ -250,6 +252,7 @@ abstract class SustainabilityTestSuite<TEngine : ApplicationEngine, TConfigurati
         assertTrue { job!!.isCancelled }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun testEmbeddedServerCancellation() {
         val parent = Job()
@@ -344,7 +347,7 @@ abstract class SustainabilityTestSuite<TEngine : ApplicationEngine, TConfigurati
             thread {
                 try {
                     withUrl("/$i") {
-                        content.toInputStream().reader().use { reader ->
+                        body<InputStream>().reader().use { reader ->
                             val firstByte = reader.read()
                             if (firstByte == -1) {
                                 fail("Premature end of response stream at iteration $i")
@@ -401,7 +404,7 @@ abstract class SustainabilityTestSuite<TEngine : ApplicationEngine, TConfigurati
         }
 
         withUrl("/file") {
-            assertEquals(originalSha1WithSize, content.toInputStream().crcWithSize())
+            assertEquals(originalSha1WithSize, body<InputStream>().crcWithSize())
         }
     }
 
@@ -634,7 +637,7 @@ abstract class SustainabilityTestSuite<TEngine : ApplicationEngine, TConfigurati
     }
 
     @Test
-    public fun testErrorInApplicationCallPipelineInterceptor() {
+    fun testErrorInApplicationCallPipelineInterceptor() {
         val loggerDelegate = LoggerFactory.getLogger("ktor.test")
         val logger = object : Logger by loggerDelegate {
             override fun error(message: String?, cause: Throwable?) {
@@ -669,7 +672,7 @@ abstract class SustainabilityTestSuite<TEngine : ApplicationEngine, TConfigurati
     }
 
     @Test
-    public fun testErrorInApplicationReceivePipelineInterceptor() {
+    fun testErrorInApplicationReceivePipelineInterceptor() {
         val loggerDelegate = LoggerFactory.getLogger("ktor.test")
         val logger = object : Logger by loggerDelegate {
             override fun error(message: String?, cause: Throwable?) {
@@ -707,7 +710,7 @@ abstract class SustainabilityTestSuite<TEngine : ApplicationEngine, TConfigurati
     }
 
     @Test
-    public fun testErrorInApplicationSendPipelineInterceptor() {
+    fun testErrorInApplicationSendPipelineInterceptor() {
         val loggerDelegate = LoggerFactory.getLogger("ktor.test")
         val logger = object : Logger by loggerDelegate {
             override fun error(message: String?, cause: Throwable?) {
@@ -720,8 +723,8 @@ abstract class SustainabilityTestSuite<TEngine : ApplicationEngine, TConfigurati
                 var intercepted = false
                 val server = createServer(log = logger) {
                     intercept(ApplicationCallPipeline.Setup) {
-                        call.response.pipeline.intercept(phase) {
-                            if (intercepted) return@intercept
+                        call.response.pipeline.intercept(phase) second@{
+                            if (intercepted) return@second
                             intercepted = true
                             throw IllegalStateException("Failed in phase $phase")
                         }
@@ -736,7 +739,7 @@ abstract class SustainabilityTestSuite<TEngine : ApplicationEngine, TConfigurati
                 startServer(server)
 
                 withUrl("/", { intercepted = false }) {
-                    val text = body<String>()
+                    body<String>()
                     assertEquals(HttpStatusCode.InternalServerError, status, "Failed in phase $phase")
                     assertEquals(exceptions.size, 1, "Failed in phase $phase")
                     assertEquals(exceptions[0].message, "Failed in phase $phase")
@@ -747,8 +750,9 @@ abstract class SustainabilityTestSuite<TEngine : ApplicationEngine, TConfigurati
             }
     }
 
+    @OptIn(EngineAPI::class)
     @Test
-    public open fun testErrorInEnginePipelineInterceptor() {
+    open fun testErrorInEnginePipelineInterceptor() {
         val loggerDelegate = LoggerFactory.getLogger("ktor.test")
         val logger = object : Logger by loggerDelegate {
             override fun error(message: String?, cause: Throwable?) {
@@ -780,7 +784,7 @@ abstract class SustainabilityTestSuite<TEngine : ApplicationEngine, TConfigurati
     }
 
     @Test
-    public fun testRespondBlockingLarge() {
+    fun testRespondBlockingLarge() {
         val server = createServer {
             routing {
                 get("/blocking/large") {
@@ -797,7 +801,7 @@ abstract class SustainabilityTestSuite<TEngine : ApplicationEngine, TConfigurati
         withUrl("/blocking/large") {
             assertEquals(HttpStatusCode.OK, status)
             assertEquals(ContentType.Text.Plain, contentType()?.withoutParameters())
-            val result = content.toInputStream().crcWithSize()
+            val result = body<InputStream>().crcWithSize()
             assertEquals(10000 * 13L, result.second)
         }
     }

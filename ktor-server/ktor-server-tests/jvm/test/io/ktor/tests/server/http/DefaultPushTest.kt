@@ -6,9 +6,11 @@ package io.ktor.tests.server.http
 
 import io.ktor.application.*
 import io.ktor.http.*
+import io.ktor.response.*
 import io.ktor.server.testing.*
 import kotlin.test.*
 
+@OptIn(UseHttp2Push::class)
 class DefaultPushTest {
     @Test
     fun testDefaultPush() {

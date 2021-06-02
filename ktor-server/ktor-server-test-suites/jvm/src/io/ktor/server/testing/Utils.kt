@@ -5,6 +5,7 @@
 package io.ktor.server.testing
 
 import java.io.*
+import java.util.*
 import java.util.zip.*
 import kotlin.test.*
 
@@ -61,13 +62,9 @@ internal fun BufferedReader.parseHeadersAndGetContentLength(): Int {
             break
         }
 
-        when (line.split(" ", ":")[0].toLowerCase()) {
-            "content-length" -> {
-                contentLength = line.drop(16).trim().toInt()
-            }
-            "transfer-encoding" -> {
-                error("We don't support chunked for 400 in this test")
-            }
+        when (line.split(" ", ":")[0].lowercase(Locale.getDefault())) {
+            "content-length" -> contentLength = line.drop(16).trim().toInt()
+            "transfer-encoding" -> error("We don't support chunked for 400 in this test")
         }
     } while (true)
     return contentLength

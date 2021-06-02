@@ -55,12 +55,6 @@ public inline fun <reified R : Any> Parameters.getOrFail(name: String): R {
 }
 
 @PublishedApi
-@Deprecated("Please use overload with typeInfo parameter", level = DeprecationLevel.ERROR)
-internal fun <R : Any> Parameters.getOrFailImpl(name: String, type: KClass<R>, javaType: Type): R {
-    error("Please use overload with typeInfo parameter")
-}
-
-@PublishedApi
 internal fun <R : Any> Parameters.getOrFailImpl(name: String, typeInfo: TypeInfo): R {
     val values = getAll(name) ?: throw MissingRequestParameterException(name)
     return try {
