@@ -9,7 +9,6 @@ import kotlinx.coroutines.*
 import java.util.concurrent.atomic.*
 
 @Suppress("KDocMissingDocumentation")
-@InternalAPI
 public class InterestSuspensionsMap {
     @Volatile
     @Suppress("unused")
@@ -54,6 +53,7 @@ public class InterestSuspensionsMap {
 
     public fun removeSuspension(interest: SelectInterest): CancellableContinuation<Unit>? =
         updater(interest).getAndSet(this, null)
+
     public fun removeSuspension(interestOrdinal: Int): CancellableContinuation<Unit>? =
         updaters[interestOrdinal].getAndSet(this, null)
 
@@ -79,6 +79,6 @@ public class InterestSuspensionsMap {
 
         private fun updater(interest: SelectInterest):
             AtomicReferenceFieldUpdater<InterestSuspensionsMap, CancellableContinuation<Unit>?> =
-                updaters[interest.ordinal]
+            updaters[interest.ordinal]
     }
 }
