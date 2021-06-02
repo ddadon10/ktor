@@ -7,6 +7,7 @@ package io.ktor.client.features.json
 import io.ktor.http.*
 import kotlin.test.*
 
+@Suppress("DEPRECATION")
 class JsonFeatureTest {
     @Test
     fun testDefaultContentTypes() {

@@ -2,6 +2,8 @@
 * Copyright 2014-2021 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
 */
 
+import KtorBuildProperties.currentJdk
+import KtorBuildProperties.ideaActive
 import org.jetbrains.kotlin.gradle.plugin.*
 import java.io.*
 import java.net.*
@@ -12,8 +14,6 @@ val junit_version: String by project.extra
 val kotlin_version: String by project.extra
 val logback_version: String by project.extra
 val coroutines_version: String by project
-
-val ideaActive: Boolean by project.extra
 
 plugins {
     id("kotlinx-serialization")
@@ -92,7 +92,7 @@ kotlin.sourceSets {
             runtimeOnly(project(":ktor-client:ktor-client-cio"))
             runtimeOnly(project(":ktor-client:ktor-client-android"))
             runtimeOnly(project(":ktor-client:ktor-client-okhttp"))
-            if (project.ext["currentJdk"] as Int >= 11) {
+            if (currentJdk >= 11) {
                 runtimeOnly(project(":ktor-client:ktor-client-java"))
             }
         }

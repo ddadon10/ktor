@@ -2,9 +2,12 @@
  * Copyright 2014-2021 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
  */
 
+@file:Suppress("UNUSED_PARAMETER")
+
 package io.ktor.client.statement
 
 import io.ktor.client.*
+import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.utils.io.*
 import io.ktor.utils.io.charsets.*

@@ -5,10 +5,13 @@
 package io.ktor.client.features.json.serializer
 
 import io.ktor.client.features.json.*
+import io.ktor.util.*
 
 @Suppress("unused")
 private val InitHook = SerializerInitializer
 
+@Suppress("DEPRECATION")
+@OptIn(InternalAPI::class)
 private object SerializerInitializer {
     init {
         serializers.add(KotlinxSerializer())

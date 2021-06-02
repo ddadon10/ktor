@@ -1,8 +1,8 @@
+import KtorBuildProperties.ideaActive
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 
-val ideaActive: Boolean by project.extra
 val serialization_version: String by project.extra
 
 plugins {
@@ -52,7 +52,9 @@ kotlin {
                             val winTests = tasks.getByName("mingwX64Test") as KotlinNativeTest
                             winTests.environment(
                                 "PATH",
-                                "c:\\msys64\\mingw64\\bin;c:\\tools\\msys64\\mingw64\\bin;C:\\Tools\\msys2\\mingw64\\bin"
+                                "c:\\msys64\\mingw64\\bin;" +
+                                    "c:\\tools\\msys64\\mingw64\\bin;" +
+                                    "c:\\Tools\\msys2\\mingw64\\bin"
                             )
                         }
                     }
@@ -76,7 +78,7 @@ kotlin {
         }
 
         // Hack: register the Native interop klibs as outputs of Kotlin source sets:
-        if (!ideaActive) {
+        if (!KtorBuildProperties.ideaActive) {
             val libcurlInterop by creating
             getByName("posixMain").dependsOn(libcurlInterop)
             apply(from = "$rootDir/gradle/interop-as-source-set-klib.gradle")

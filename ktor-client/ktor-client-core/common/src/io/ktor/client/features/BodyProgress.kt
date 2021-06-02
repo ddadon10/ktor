@@ -41,7 +41,7 @@ public class BodyProgress internal constructor() {
             proceedWith(observableContent)
         }
 
-        scope.receivePipeline.intercept(HttpReceivePipeline.After) { response ->
+        scope.receivePipeline.intercept(HttpReceivePipeline.After) {
             val listener = context.request.attributes
                 .getOrNull(DownloadProgressListenerAttributeKey) ?: return@intercept
             val observableCall = context.withObservableDownload(listener)
@@ -66,6 +66,7 @@ public class BodyProgress internal constructor() {
     }
 }
 
+@OptIn(InternalAPI::class)
 internal fun HttpClientCall.withObservableDownload(listener: ProgressListener): HttpClientCall {
     val observableByteChannel = response.content.observable(coroutineContext, response.contentLength(), listener)
     return wrapWithContent(observableByteChannel)

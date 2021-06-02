@@ -52,6 +52,7 @@ internal suspend fun HttpClient.executeWebSocketRequest(
     }
 }
 
+@OptIn(DelicateCoroutinesApi::class)
 internal class JavaHttpWebSocket(
     private val callContext: CoroutineContext,
     private val httpClient: HttpClient,
@@ -128,6 +129,7 @@ internal class JavaHttpWebSocket(
         }
     }
 
+    @OptIn(InternalAPI::class)
     suspend fun getResponse(): HttpResponseData {
         val builder = httpClient.newWebSocketBuilder()
 
@@ -162,22 +164,22 @@ internal class JavaHttpWebSocket(
     }
 
     override fun onText(webSocket: WebSocket, data: CharSequence, last: Boolean): CompletionStage<*> = async {
-        _incoming.offer(Frame.Text(last, data.toString().toByteArray()))
+        _incoming.trySend(Frame.Text(last, data.toString().toByteArray())).isSuccess
         webSocket.request(1)
     }.asCompletableFuture()
 
     override fun onBinary(webSocket: WebSocket, data: ByteBuffer, last: Boolean): CompletionStage<*> = async {
-        _incoming.offer(Frame.Binary(last, data))
+        _incoming.trySend(Frame.Binary(last, data)).isSuccess
         webSocket.request(1)
     }.asCompletableFuture()
 
     override fun onPing(webSocket: WebSocket, message: ByteBuffer): CompletionStage<*> = async {
-        _incoming.offer(Frame.Ping(message))
+        _incoming.trySend(Frame.Ping(message)).isSuccess
         webSocket.request(1)
     }.asCompletableFuture()
 
     override fun onPong(webSocket: WebSocket, message: ByteBuffer): CompletionStage<*> = async {
-        _incoming.offer(Frame.Pong(message))
+        _incoming.trySend(Frame.Pong(message)).isSuccess
         webSocket.request(1)
     }.asCompletableFuture()
 

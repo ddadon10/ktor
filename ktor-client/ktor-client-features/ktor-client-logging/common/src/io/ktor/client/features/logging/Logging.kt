@@ -135,6 +135,7 @@ public class Logging(
         log("-> $key: $value")
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     private suspend fun logRequestBody(content: OutgoingContent): OutgoingContent? {
         logger.log("BODY Content-Type: ${content.contentType}")
 
@@ -159,6 +160,7 @@ public class Logging(
             return Logging(config.logger, config.level, config.filters)
         }
 
+        @OptIn(InternalAPI::class)
         override fun install(feature: Logging, scope: HttpClient) {
             scope.sendPipeline.intercept(HttpSendPipeline.Monitoring) {
                 val response = if (feature.filters.isEmpty() || feature.filters.any { it(context) }) {

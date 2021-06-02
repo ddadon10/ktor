@@ -8,9 +8,9 @@ import io.ktor.client.engine.*
 import io.ktor.client.engine.curl.internal.*
 import io.ktor.client.features.*
 import io.ktor.client.request.*
-import io.ktor.client.utils.*
 import io.ktor.http.*
 import io.ktor.http.cio.*
+import io.ktor.util.*
 import io.ktor.util.date.*
 import io.ktor.utils.io.*
 import kotlinx.coroutines.*
@@ -30,6 +30,7 @@ internal class CurlClientEngine(
         }
     }
 
+    @OptIn(InternalAPI::class)
     override suspend fun execute(data: HttpRequestData): HttpResponseData {
         val callContext = callContext()
 

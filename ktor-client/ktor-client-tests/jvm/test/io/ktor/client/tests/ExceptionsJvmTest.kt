@@ -17,6 +17,7 @@ import org.junit.*
 import java.net.*
 import kotlin.io.use
 
+@Suppress("BlockingMethodInNonBlockingContext", "ControlFlowWithEmptyBody")
 class ExceptionsJvmTest {
 
     @Test
@@ -30,6 +31,7 @@ class ExceptionsJvmTest {
         }
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     @Test
     fun testConnectionClosedDuringRequest(): Unit = runBlocking {
         val server = ServerSocket(0)

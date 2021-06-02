@@ -22,6 +22,7 @@ import kotlin.coroutines.*
     ReplaceWith("wrapWithContent(content)"),
     level = DeprecationLevel.ERROR
 )
+@Suppress("UNUSED_PARAMETER")
 public fun HttpClientCall.wrapWithContent(
     content: ByteReadChannel,
     shouldCloseOrigin: Boolean
@@ -36,6 +37,7 @@ public fun HttpClientCall.wrapWithContent(content: ByteReadChannel): HttpClientC
     return DelegatedCall(currentClient, content, this)
 }
 
+@OptIn(InternalAPI::class)
 internal class DelegatedCall(
     client: HttpClient,
     content: ByteReadChannel,
@@ -53,7 +55,8 @@ internal class DelegatedRequest(
     origin: HttpRequest
 ) : HttpRequest by origin
 
-internal class DelegatedResponse(
+@InternalAPI
+internal class DelegatedResponse @OptIn(InternalAPI::class) constructor(
     override val call: HttpClientCall,
     override val content: ByteReadChannel,
     private val origin: HttpResponse

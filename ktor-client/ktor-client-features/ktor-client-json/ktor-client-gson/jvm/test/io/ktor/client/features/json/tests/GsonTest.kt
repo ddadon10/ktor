@@ -6,6 +6,7 @@ package io.ktor.client.features.json.tests
 
 import io.ktor.client.features.json.*
 
+@Suppress("DEPRECATION")
 class GsonTest : JsonTest() {
     override val serializerImpl = GsonSerializer()
 }

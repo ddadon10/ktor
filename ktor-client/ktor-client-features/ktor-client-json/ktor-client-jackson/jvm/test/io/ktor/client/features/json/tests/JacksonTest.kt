@@ -17,6 +17,7 @@ import io.ktor.response.*
 import io.ktor.routing.*
 import kotlin.test.*
 
+@Suppress("DEPRECATION")
 class JacksonTest : JsonTest() {
     override val serializerImpl = JacksonSerializer()
 

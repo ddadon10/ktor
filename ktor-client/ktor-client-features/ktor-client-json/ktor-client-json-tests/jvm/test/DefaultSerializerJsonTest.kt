@@ -5,6 +5,7 @@
 import io.ktor.client.features.json.*
 import io.ktor.client.features.json.tests.*
 
+@Suppress("DEPRECATION")
 class DefaultSerializerJsonTest : JsonTest() {
     // Force JsonFeature to use defaultSerializer()
     override val serializerImpl: JsonSerializer = GsonSerializer()

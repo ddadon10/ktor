@@ -26,6 +26,7 @@ public class Auth(
             return Auth().apply(block)
         }
 
+        @OptIn(InternalAPI::class)
         override fun install(feature: Auth, scope: HttpClient) {
             scope.requestPipeline.intercept(HttpRequestPipeline.State) {
                 feature.providers.filter { it.sendWithoutRequest(context) }.forEach {
@@ -80,5 +81,6 @@ public fun HttpClientConfig<*>.Auth(block: Auth.() -> Unit) {
  * parameter to AuthProvider.addRequestHeaders instead in the future and the attribute will
  * be removed after that.
  */
+@OptIn(InternalAPI::class)
 @PublicAPICandidate("1.6.0")
 internal val AuthHeaderAttribute = AttributeKey<HttpAuthHeader>("AuthHeader")
