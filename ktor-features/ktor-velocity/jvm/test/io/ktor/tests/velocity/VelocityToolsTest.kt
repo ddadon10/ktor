@@ -2,12 +2,13 @@
  * Copyright 2014-2019 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
  */
 
+@file:Suppress("unused", "UNUSED_PARAMETER")
+
 package io.ktor.tests.velocity
 
 import io.ktor.application.*
 import io.ktor.features.*
 import io.ktor.http.*
-import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.server.testing.*
 import io.ktor.velocity.*
@@ -15,7 +16,6 @@ import org.apache.velocity.runtime.resource.loader.*
 import org.apache.velocity.runtime.resource.util.*
 import org.apache.velocity.tools.config.*
 import java.util.*
-import java.util.zip.*
 import kotlin.test.*
 
 class VelocityToolsTest {
