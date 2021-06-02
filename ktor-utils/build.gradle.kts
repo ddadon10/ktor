@@ -1,7 +1,7 @@
+import KtorBuildProperties.ideaActive
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 
 val nativeCompilations: List<KotlinNativeCompilation> by project.extra
-val ideaActive: Boolean by project.extra
 
 kotlin {
     configure(nativeCompilations) {
