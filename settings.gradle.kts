@@ -19,10 +19,9 @@ pluginManagement {
 
 rootProject.name = "ktor"
 
-val native_targets_enabled = true // properties("disable_native_targets") == null
+val native_targets_enabled = !extra.has("disable_native_targets")
 
-// copied from versions.gradle
-val fullVersion = System.getProperty("java.version") ?: "8.0.0"
+val fullVersion = System.getProperty("java.version", "8.0.0")
 val versionComponents = fullVersion
     .split(".")
     .take(2)
@@ -104,3 +103,4 @@ include(":ktor-shared:ktor-shared-serialization")
 include(":ktor-shared:ktor-shared-serialization-kotlinx")
 include(":ktor-shared:ktor-shared-serialization-gson")
 include(":ktor-shared:ktor-shared-serialization-jackson")
+include(":ktor-shared:ktor-shared-events")

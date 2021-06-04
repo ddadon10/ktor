@@ -3,6 +3,7 @@
  */
 
 import org.jetbrains.dokka.gradle.*
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.konan.target.*
 
 buildscript {
@@ -77,10 +78,7 @@ extra["publishLocal"] = project.hasProperty("publishLocal")
 
 val configuredVersion: String by extra
 
-apply(from = "gradle/experimental.gradle")
 apply(from = "gradle/verifier.gradle")
-
-val experimentalAnnotations: List<String> by extra
 
 /**
  * `darwin` is subset of `posix`.
@@ -142,6 +140,7 @@ allprojects {
     if (nonDefaultProjectStructure.contains(project.name)) return@allprojects
 
     apply(plugin = "kotlin-multiplatform")
+    apply(plugin = "kotlinx-atomicfu")
 
     apply(from = rootProject.file("gradle/utility.gradle"))
 
@@ -159,27 +158,35 @@ allprojects {
     }
 
     kotlin {
+        targets.all {
+            compilations.all {
+                kotlinOptions {
+                    if (this@all.compileKotlinTaskName != "compilePosixMainKotlinMetadata") {
+                        allWarningsAsErrors = true
+                    }
+                    freeCompilerArgs = listOf("-Xopt-in=kotlin.RequiresOptIn")
+                }
+            }
+        }
+
         if (!disabledExplicitApiModeProjects.contains(project.name)) {
             explicitApi()
         }
 
-        sourceSets.matching { !(it.name in listOf("main", "test")) }.all {
-            val srcDir = if (name.endsWith("Main")) "src" else "test"
-            val resourcesPrefix = if (name.endsWith("Test")) "test-" else ""
-            val platform = name.dropLast(4)
+        sourceSets
+            .matching { it.name !in listOf("main", "test") }
+            .all {
+                val srcDir = if (name.endsWith("Main")) "src" else "test"
+                val resourcesPrefix = if (name.endsWith("Test")) "test-" else ""
+                val platform = name.dropLast(4)
 
-            kotlin.srcDir("$platform/$srcDir")
-            resources.srcDir("$platform/${resourcesPrefix}resources")
+                kotlin.srcDir("$platform/$srcDir")
+                resources.srcDir("$platform/${resourcesPrefix}resources")
 
-            languageSettings.apply {
-                progressiveMode = true
-                experimentalAnnotations.forEach { useExperimentalAnnotation(it) }
-
-                if (project.path.startsWith(":ktor-server:ktor-server") && project.name != "ktor-server-core") {
-                    useExperimentalAnnotation("io.ktor.server.engine.EngineAPI")
+                languageSettings.apply {
+                    progressiveMode = true
                 }
             }
-        }
     }
 
     val skipPublish: List<String> by rootProject.extra
@@ -218,6 +225,7 @@ subprojects {
 val docs: String? by extra
 if (docs != null) {
     tasks.withType<DokkaMultiModuleTask> {
-        pluginsMapConfiguration.set(mapOf("org.jetbrains.dokka.versioning.VersioningPlugin" to """{ "version": "$configuredVersion", "olderVersionsDir":"${docs}" }"""))
+        val key = "org.jetbrains.dokka.versioning.VersioningPlugin"
+        pluginsMapConfiguration.set(mapOf(key to """{ "version": "$configuredVersion", "olderVersionsDir":"$docs" }"""))
     }
 }
