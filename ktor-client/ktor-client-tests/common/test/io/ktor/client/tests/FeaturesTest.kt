@@ -47,7 +47,7 @@ class FeaturesTest : ClientLoader() {
         val task = Job()
         config {
             ResponseObserver { response ->
-                val text = response.body<String>()
+                val text = response.content.readRemaining(Long.MAX_VALUE, 0).readText()
                 assertEquals(body, text)
                 task.complete()
             }

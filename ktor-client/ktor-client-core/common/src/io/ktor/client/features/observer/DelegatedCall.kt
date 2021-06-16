@@ -9,7 +9,6 @@ import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
-import io.ktor.util.*
 import io.ktor.util.date.*
 import io.ktor.utils.io.*
 import kotlin.coroutines.*
@@ -34,6 +33,13 @@ public fun HttpClientCall.wrapWithContent(content: ByteReadChannel): HttpClientC
     val currentClient = client ?: error("Fail to create response observer in different native thread.")
 
     return DelegatedCall(currentClient, content, this)
+}
+
+/**
+ * Wrap existing [HttpResponse] with new [content].
+ */
+internal fun HttpResponse.wrapWithContent(content: ByteReadChannel): HttpResponse {
+    return DelegatedResponse(call, content, this)
 }
 
 internal class DelegatedCall(
